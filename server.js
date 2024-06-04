@@ -1,4 +1,7 @@
 const express = require('express');
+const router = require("./router");
+const bodyParser = require('body-parser');
+const sequelize = require('./db');
 
 const startServer = async () => {
     const hostname = '127.0.0.1';
@@ -6,14 +9,18 @@ const startServer = async () => {
     app.set('port', process.env.PORT || 3000);
     app.set("host", process.env.HOST || "0.0.0.0");
     const port = app.get('port');
+    
+    app.use(bodyParser.json());
 
-    app.get('/', (req, res) => {
-        res.sendFile(__dirname+'/index.html');
-    });
+    sequelize.sync()
+        .then(() => {
+            console.log('Database synced');
+        })
+        .catch(err => {
+            console.error('Error syncing database:', err);
+        });
 
-    app.get('/branch/', (req, res) => {
-        res.send('테스트용');
-    });
+    app.use(router);
 
     app.listen(app.get('port'), ()=>{
         console.log(app.get('port'), '번 포트에서 서버 실행 중..')
