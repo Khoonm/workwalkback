@@ -9,13 +9,33 @@
  <body>
    <h2>백엔드 서버 테스트</h2>
    <p>메인 페이지</p>
+   <hr />
    <p>/employee</p>
     <div>
-      <p>get - 직원 확인</p>
-      <p>post - 직원 추가</p>
-      <p>get/:id - 특정 직원 확인</p>
-      <p>put/:id - 특정 직원 수정</p>
-      <p>delete/:id - 특정 직원 삭제</p>
+      <p>get, post</p>
+      <p>/:id 로 개별 조회 가능</p>
+      <p>name, key, department, phone_number 요구</p>
+    </div>
+  <hr />
+  <p>/work</p>
+    <div>
+      <p>get, post</p>
+      <p>/:id 로 개별 조회 가능</p>
+      <p>date, status, name, reviewer, description 요구</p>
+    </div>
+  <hr />
+  <p>/workStatus</p>
+    <div>
+      <p>get, post</p>
+      <p>/:id 로 개별 조회 가능</p>
+      <p>name, status, total_hours, commute_method, report 요구</p>
+    </div>
+  <hr />
+  <p>/crawledData</p>
+    <div>
+      <p>get, post</p>
+      <p>/:id 로 개별 조회 가능</p>
+      <p>timestamp, url, text 요구</p>
     </div>
  </body>
 </html>

@@ -1,8 +1,8 @@
 const { Sequelize, DataTypes } = require('sequelize');
-const sequelize = require('../db'); // sequelize 인스턴스를 가져옵니다.
+const sequelize = require('../db');
 
 const Employee = sequelize.define('Employee', {
-  nickname: {
+  name: {
     type: DataTypes.STRING,
     allowNull: false,
   },

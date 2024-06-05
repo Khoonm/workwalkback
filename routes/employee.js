@@ -1,17 +1,12 @@
 const express = require('express');
 const router = express.Router();
-const Employee = require('./models/employee.js');
-
-
-router.get('/', (req, res) => {
-    res.sendFile(__dirname+'/index.html');
-});
+const Employee = require('../models/employee.js');
 
 router.post('/employee', async (req, res) => {
-    const { nickname, key, department, phone_number } = req.body;
+    const { name, key, department, phone_number } = req.body;
     try {
         const employee = await Employee.create({ 
-            nickname, 
+            name, 
             key, 
             department, 
             phone_number 
@@ -47,11 +42,11 @@ router.get('/employee/:id', async (req, res) => {
   
 router.put('/employee/:id', async (req, res) => {
     const { id } = req.params;
-    const { nickname, key, department, phone_number } = req.body;
+    const { name, key, department, phone_number } = req.body;
     try {
         const employee = await Employee.findByPk(id);
         if (employee) {
-            employee.nickname = nickname;
+            employee.name = name;
             employee.key = key;
             employee.department = department;
             employee.phone_number = phone_number;
