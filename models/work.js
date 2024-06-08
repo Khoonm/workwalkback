@@ -29,6 +29,8 @@ const Work = sequelize.define('Work', {
         type: DataTypes.INTEGER,
         allowNull: false,
     },
+}, {
+  timestamps: false
 });
 
 Employee.hasMany(Work, { foreignKey: 'USER_KEY_CD' });

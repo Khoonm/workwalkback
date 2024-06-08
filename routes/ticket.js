@@ -4,10 +4,9 @@ const Ticket = require('../models/ticket.js');
 
 // Create a new ticket entry
 router.post('/ticket', async (req, res) => {
-    const { TICKET_IDX, USER_KEY_CD, TITLE_STR, DATE_ST_YMD, DATE_END_YMD, CONTENT_STR, MANAGER_STR, STATUS_FLG } = req.body;
+    const { USER_KEY_CD, TITLE_STR, DATE_ST_YMD, DATE_END_YMD, CONTENT_STR, MANAGER_STR, STATUS_FLG } = req.body;
     try {
         const ticket = await Ticket.create({ 
-            TICKET_IDX, 
             USER_KEY_CD, 
             TITLE_STR, 
             DATE_ST_YMD, 

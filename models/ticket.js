@@ -8,6 +8,7 @@ const Ticket = sequelize.define('Ticket', {
         primaryKey : true,
         unique : true,
         allowNull: false,
+        autoIncrement: true,
     },
     USER_KEY_CD: {
         type: DataTypes.STRING(8),
@@ -41,6 +42,8 @@ const Ticket = sequelize.define('Ticket', {
         type: DataTypes.INTEGER,
         allowNull: false,
     },
+}, {
+  timestamps: false
 });
 
 Employee.hasMany(Ticket, { foreignKey: 'USER_KEY_CD' });

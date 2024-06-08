@@ -50,6 +50,8 @@ const Group = sequelize.define('Group', {
         type: DataTypes.NUMBER,
         allowNull: false,
     },
+}, {
+  timestamps: false
 });
 
 Employee.hasMany(Group, { foreignKey: 'USER_KEY_CD' });

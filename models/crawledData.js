@@ -37,6 +37,8 @@ const CrawledData = sequelize.define('CrawledData', {
         type: DataTypes.INTEGER,
         allowNull: false,
     },
+}, {
+  timestamps: false
 });
 
 Employee.hasMany(CrawledData, { foreignKey: 'USER_KEY_CD' });

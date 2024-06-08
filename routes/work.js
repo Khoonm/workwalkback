@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Work = require('../models/work');
+const Employee = require('../models/employee');
 
 // Create a new work entry
 router.post('/work', async (req, res) => {
@@ -22,7 +23,14 @@ router.post('/work', async (req, res) => {
 // Retrieve all work entries
 router.get('/work', async (req, res) => {
     try {
-        const works = await Work.findAll();
+        const works = await Work.findAll({
+            include: [
+                {
+                    model: Employee,
+                    attributes: ['USER_NM'] // 가져오고 싶은 employee 속성
+                }
+            ]
+        });
         res.json(works);
     } catch (error) {
         res.status(500).json({ error: 'Failed to retrieve works' });
