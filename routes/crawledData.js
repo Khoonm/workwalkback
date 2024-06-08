@@ -1,16 +1,19 @@
-// routes/crawledData.js
 const express = require('express');
 const router = express.Router();
 const CrawledData = require('../models/crawledData');
 
-// Create a new crawled data entry
+// Create a new data entry
 router.post('/crawledData', async (req, res) => {
-    const { timestamp, url, text } = req.body;
+    const { IDX_CD, USER_KEY_CD, GET_DATE_YMD, GET_TIME_DT, URL_STR, DATA_STR, TYPE_FLG } = req.body;
     try {
-        const crawledData = await CrawledData.create({ 
-            timestamp, 
-            url, 
-            text 
+        const crawledData = await crawledData.create({ 
+            IDX_CD, 
+            USER_KEY_CD, 
+            GET_DATE_YMD, 
+            GET_TIME_DT, 
+            URL_STR, 
+            DATA_STR, 
+            TYPE_FLG 
         });
         res.status(201).json(crawledData);
     } catch (error) {
@@ -29,10 +32,10 @@ router.get('/crawledData', async (req, res) => {
 });
 
 // Retrieve a specific crawled data entry by ID
-router.get('/crawledData/:id', async (req, res) => {
-    const { id } = req.params;
+router.get('/crawledData/:IDX_CD', async (req, res) => {
+    const { IDX_CD } = req.params;
     try {
-        const crawledData = await CrawledData.findByPk(id);
+        const crawledData = await CrawledData.findByPk(IDX_CD);
         if (crawledData) {
             res.json(crawledData);
         } else {
@@ -44,15 +47,18 @@ router.get('/crawledData/:id', async (req, res) => {
 });
 
 // Update a specific crawled data entry by ID
-router.put('/crawledData/:id', async (req, res) => {
-    const { id } = req.params;
-    const { timestamp, url, text } = req.body;
+router.put('/crawledData/:IDX_CD', async (req, res) => {
+    const { IDX_CD } = req.params;
+    const { USER_KEY_CD, GET_DATE_YMD, GET_TIME_DT, URL_STR, DATA_STR, TYPE_FLG } = req.body;
     try {
-        const crawledData = await CrawledData.findByPk(id);
+        const crawledData = await CrawledData.findByPk(IDX_CD);
         if (crawledData) {
-            crawledData.timestamp = timestamp;
-            crawledData.url = url;
-            crawledData.text = text;
+            crawledData.USER_KEY_CD = USER_KEY_CD;
+            crawledData.GET_DATE_YMD = GET_DATE_YMD;
+            crawledData.GET_TIME_DT = GET_TIME_DT;
+            crawledData.URL_STR = URL_STR;
+            crawledData.DATA_STR = DATA_STR;
+            crawledData.TYPE_FLG = TYPE_FLG;
             await crawledData.save();
             res.json(crawledData);
         } else {
@@ -64,10 +70,10 @@ router.put('/crawledData/:id', async (req, res) => {
 });
 
 // Delete a specific crawled data entry by ID
-router.delete('/crawledData/:id', async (req, res) => {
-    const { id } = req.params;
+router.delete('/crawledData/:IDX_CD', async (req, res) => {
+    const { IDX_CD } = req.params;
     try {
-        const crawledData = await CrawledData.findByPk(id);
+        const crawledData = await CrawledData.findByPk(IDX_CD);
         if (crawledData) {
             await crawledData.destroy();
             res.status(204).end();

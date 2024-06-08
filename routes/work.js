@@ -4,14 +4,14 @@ const Work = require('../models/work');
 
 // Create a new work entry
 router.post('/work', async (req, res) => {
-    const { date, status, name, reviewer, description } = req.body;
+    const { IDX_CD, USER_KEY_CD, DATE_YMD, TIME_DT, FIN_FLG } = req.body;
     try {
         const work = await Work.create({ 
-            date, 
-            status, 
-            name, 
-            reviewer, 
-            description 
+            IDX_CD, 
+            USER_KEY_CD, 
+            DATE_YMD, 
+            TIME_DT,
+            FIN_FLG
         });
         res.status(201).json(work);
     } catch (error) {
@@ -30,10 +30,10 @@ router.get('/work', async (req, res) => {
 });
 
 // Retrieve a specific work entry by ID
-router.get('/work/:id', async (req, res) => {
-    const { id } = req.params;
+router.get('/work/:IDX_CD', async (req, res) => {
+    const { IDX_CD } = req.params;
     try {
-        const work = await Work.findByPk(id);
+        const work = await Work.findByPk(IDX_CD);
         if (work) {
             res.json(work);
         } else {
@@ -45,17 +45,16 @@ router.get('/work/:id', async (req, res) => {
 });
 
 // Update a specific work entry by ID
-router.put('/work/:id', async (req, res) => {
-    const { id } = req.params;
-    const { date, status, name, reviewer, description } = req.body;
+router.put('/work/:IDX_CD', async (req, res) => {
+    const { IDX_CD } = req.params;
+    const { USER_KEY_CD, DATE_YMD, TIME_DT, FIN_FLG } = req.body;
     try {
-        const work = await Work.findByPk(id);
+        const work = await Work.findByPk(IDX_CD);
         if (work) {
-            work.date = date;
-            work.status = status;
-            work.name = name;
-            work.reviewer = reviewer;
-            work.description = description;
+            work.USER_KEY_CD = USER_KEY_CD;
+            work.DATE_YMD = DATE_YMD;
+            work.TIME_DT = TIME_DT;
+            work.FIN_FLG = FIN_FLG;
             await work.save();
             res.json(work);
         } else {
@@ -67,10 +66,10 @@ router.put('/work/:id', async (req, res) => {
 });
 
 // Delete a specific work entry by ID
-router.delete('/work/:id', async (req, res) => {
-    const { id } = req.params;
+router.delete('/work/:IDX_CD', async (req, res) => {
+    const { IDX_CD } = req.params;
     try {
-        const work = await Work.findByPk(id);
+        const work = await Work.findByPk(IDX_CD);
         if (work) {
             await work.destroy();
             res.status(204).end();

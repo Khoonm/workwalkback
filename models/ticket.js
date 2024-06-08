@@ -2,8 +2,8 @@ const { Sequelize, DataTypes } = require('sequelize');
 const sequelize = require('../db');
 const Employee = require('./employee.js');
 
-const CrawledData = sequelize.define('CrawledData', {
-    IDX_CD: {
+const Ticket = sequelize.define('Ticket', {
+    TICKET_IDX: {
         type: DataTypes.INTEGER,
         primaryKey : true,
         unique : true,
@@ -17,29 +17,33 @@ const CrawledData = sequelize.define('CrawledData', {
         },
         allowNull: false,
     },
-    GET_DATE_YMD: {
+    TITLE_STR: {
+        type: DataTypes.STRING(50),
+        allowNull: false,
+    },
+    DATE_ST_YMD: {
         type: DataTypes.STRING(10),
         allowNull: false,
     },
-    GET_TIME_DT: {
-        type: DataTypes.STRING(5),
+    DATE_END_YMD: {
+        type: DataTypes.STRING(10),
         allowNull: false,
     },
-    URL_STR: {
-        type: DataTypes.STRING(100),
-        allowNull: false,
-    },
-    DATA_STR: {
+    CONTENT_STR: {
         type: DataTypes.STRING(5000),
         allowNull: false,
     },
-    TYPE_FLG: {
+    MANAGER_STR: {
+        type: DataTypes.STRING(4),
+        allowNull: false,
+    },
+    STATUS_FLG: {
         type: DataTypes.INTEGER,
         allowNull: false,
     },
 });
 
-Employee.hasMany(CrawledData, { foreignKey: 'USER_KEY_CD' });
-CrawledData.belongsTo(Employee, { foreignKey: 'USER_KEY_CD' });
+Employee.hasMany(Ticket, { foreignKey: 'USER_KEY_CD' });
+Ticket.belongsTo(Employee, { foreignKey: 'USER_KEY_CD' });
 
-module.exports = CrawledData;
+module.exports = Ticket;

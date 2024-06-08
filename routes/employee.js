@@ -3,13 +3,14 @@ const router = express.Router();
 const Employee = require('../models/employee.js');
 
 router.post('/employee', async (req, res) => {
-    const { name, key, department, phone_number } = req.body;
+    const { USER_KEY_CD, USER_NM, REG_YMD, DEPT_NM, HP_NUM } = req.body;
     try {
         const employee = await Employee.create({ 
-            name, 
-            key, 
-            department, 
-            phone_number 
+            USER_KEY_CD, 
+            USER_NM, 
+            REG_YMD, 
+            DEPT_NM, 
+            HP_NUM 
         });
         res.status(201).json(employee);
     } catch (error) {
@@ -26,10 +27,10 @@ router.get('/employee', async (req, res) => {
     }
 });
   
-router.get('/employee/:id', async (req, res) => {
-    const { id } = req.params;
+router.get('/employee/:USER_KEY_CD', async (req, res) => {
+    const { USER_KEY_CD } = req.params;
     try {
-        const employee = await Employee.findByPk(id);
+        const employee = await Employee.findByPk(USER_KEY_CD);
         if (employee) {
             res.json(employee);
         } else {
@@ -40,16 +41,15 @@ router.get('/employee/:id', async (req, res) => {
     }
 });
   
-router.put('/employee/:id', async (req, res) => {
-    const { id } = req.params;
-    const { name, key, department, phone_number } = req.body;
+router.put('/employee/:USER_KEY_CD', async (req, res) => {
+    const { USER_KEY_CD } = req.params;
+    const { USER_NM, DEPT_NM, HP_NUM } = req.body;
     try {
-        const employee = await Employee.findByPk(id);
+        const employee = await Employee.findByPk(USER_KEY_CD);
         if (employee) {
-            employee.name = name;
-            employee.key = key;
-            employee.department = department;
-            employee.phone_number = phone_number;
+            employee.USER_NM = USER_NM;
+            employee.DEPT_NM = DEPT_NM;
+            employee.HP_NUM = HP_NUM;
             await employee.save();
             res.json(employee);
         } else {
@@ -60,10 +60,10 @@ router.put('/employee/:id', async (req, res) => {
     }
 });
   
-router.delete('/employee/:id', async (req, res) => {
-    const { id } = req.params;
+router.delete('/employee/:USER_KEY_CD', async (req, res) => {
+    const { USER_KEY_CD } = req.params;
     try {
-        const employee = await Employee.findByPk(id);
+        const employee = await Employee.findByPk(USER_KEY_CD);
         if (employee) {
             await employee.destroy();
             res.status(204).end();

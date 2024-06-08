@@ -1,27 +1,37 @@
 const { Sequelize, DataTypes } = require('sequelize');
 const sequelize = require('../db');
+const Employee = require('./employee.js');
 
 const Work = sequelize.define('Work', {
-    date: {
-        type: DataTypes.DATE,
+    IDX_CD: {
+        type: DataTypes.INTEGER,
+        primaryKey : true,
+        unique : true,
         allowNull: false,
     },
-    status: {
-        type: DataTypes.STRING,
+    USER_KEY_CD: {
+        type: DataTypes.STRING(8),
+        references: {
+            model: Employee,
+            key: 'USER_KEY_CD'
+        },
         allowNull: false,
     },
-    name: {
-        type: DataTypes.STRING,
+    DATE_YMD: {
+        type: DataTypes.STRING(10),
         allowNull: false,
     },
-    reviewer: {
-        type: DataTypes.STRING,
+    TIME_DT: {
+        type: DataTypes.STRING(5),
         allowNull: false,
     },
-    description: {
-        type: DataTypes.TEXT,
-        allowNull: true,
+    FIN_FLG: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
     },
 });
+
+Employee.hasMany(Work, { foreignKey: 'USER_KEY_CD' });
+Work.belongsTo(Employee, { foreignKey: 'USER_KEY_CD' });
 
 module.exports = Work;
