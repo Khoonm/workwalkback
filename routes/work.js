@@ -5,10 +5,9 @@ const Employee = require('../models/employee');
 
 // Create a new work entry
 router.post('/work', async (req, res) => {
-    const { IDX_CD, USER_KEY_CD, DATE_YMD, TIME_DT, FIN_FLG } = req.body;
+    const { USER_KEY_CD, DATE_YMD, TIME_DT, FIN_FLG } = req.body;
     try {
         const work = await Work.create({ 
-            IDX_CD, 
             USER_KEY_CD, 
             DATE_YMD, 
             TIME_DT,

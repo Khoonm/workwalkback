@@ -8,6 +8,7 @@ const Work = sequelize.define('Work', {
         primaryKey : true,
         unique : true,
         allowNull: false,
+        autoIncrement: true,
     },
     USER_KEY_CD: {
         type: DataTypes.STRING(8),

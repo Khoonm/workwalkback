@@ -8,6 +8,7 @@ const CrawledData = sequelize.define('CrawledData', {
         primaryKey : true,
         unique : true,
         allowNull: false,
+        autoIncrement: true,
     },
     USER_KEY_CD: {
         type: DataTypes.STRING(8),
@@ -31,10 +32,6 @@ const CrawledData = sequelize.define('CrawledData', {
     },
     DATA_STR: {
         type: DataTypes.STRING(5000),
-        allowNull: false,
-    },
-    TYPE_FLG: {
-        type: DataTypes.INTEGER,
         allowNull: false,
     },
 }, {

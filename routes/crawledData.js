@@ -4,16 +4,14 @@ const CrawledData = require('../models/crawledData');
 
 // Create a new data entry
 router.post('/crawledData', async (req, res) => {
-    const { IDX_CD, USER_KEY_CD, GET_DATE_YMD, GET_TIME_DT, URL_STR, DATA_STR, TYPE_FLG } = req.body;
+    const { USER_KEY_CD, GET_DATE_YMD, GET_TIME_DT, URL_STR, DATA_STR, TYPE_FLG } = req.body;
     try {
-        const crawledData = await crawledData.create({ 
-            IDX_CD, 
-            USER_KEY_CD, 
-            GET_DATE_YMD, 
-            GET_TIME_DT, 
-            URL_STR, 
-            DATA_STR, 
-            TYPE_FLG 
+        const crawledData = await CrawledData.create({ 
+            USER_KEY_CD,
+            GET_DATE_YMD,
+            GET_TIME_DT,
+            URL_STR,
+            DATA_STR
         });
         res.status(201).json(crawledData);
     } catch (error) {
