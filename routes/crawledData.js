@@ -6,6 +6,8 @@ const CrawledData = require('../models/crawledData');
 router.post('/crawledData', async (req, res) => {
     const { USER_KEY_CD, GET_DATE_YMD, GET_TIME_DT, URL_STR, DATA_STR, TYPE_FLG } = req.body;
     try {
+        // if TYPE_FLG == 1 인 경우 select 해서 *한 다음에 USER_KEY_CD, GET_DATE_YMD에 맞는 데이터만 가져오기
+        // 가져온 데이터를 보내 clustering.py를 실행시키기
         const crawledData = await CrawledData.create({ 
             USER_KEY_CD,
             GET_DATE_YMD,

@@ -16,6 +16,8 @@ import matplotlib.font_manager as fm
 
 def datasetLoader():
     # post 할때 FLG가 1이면 temp.txt를 만들거고, 그 txt 파일을 불러오는 형식으로 바꿀 생각.
+    # 서버에서 전달 받은 data 사용하기. 결과가 문자열 list이기만 하면 됨.
+    # Json 형태로 USER_KEY_CD, GET_DATE_YMD를 포함하는게 낫지 않을까?
     # API 엔드포인트 URL
     url = 'http://127.0.0.1:3000/crawledData'
 
@@ -65,7 +67,7 @@ def modelLoader(dataset):
     umap_model=umap_model,
     hdbscan_model=hdbscan_model,
     vectorizer_model=vectorizer,
-    top_n_words=10,
+    top_n_words=4,
     verbose=True
     )
 
@@ -73,50 +75,44 @@ def modelLoader(dataset):
 
     return topic_model, topics, probs, embedding_model, embeddings
 
-def similarity(embedding_model, embeddings):
+def similarity(embedding_model, embeddings, topics, dataset):
     # 각 군집의 주요 텍스트와 업무 키워드 간의 유사도 검사
     cluster_similarities = []
-    task = ['군집화 및 유사도 검사'] # 업무 티켓 가져와서 사용하기 - 같은 날짜의 CONTENT_STR
-    for topic in set(topics):
-        topic_indices = [i for i, t in enumerate(topics) if t == topic]
-        topic_texts = [dataset[i] for i in topic_indices]
-        topic_embeddings = embeddings[topic_indices]
+    # task = ['군집화 및 유사도 검사'] # 업무 티켓 가져와서 사용하기 - 같은 유저의 해당 날짜의 CONTENT_STR
+    resp = requests.get('http://127.0.0.1:3000/ticket').json()
+    tasks = [ticket for ticket in resp if ticket['USER_KEY_CD'] == 'AADS1251' and ticket['STATUS_FLG'] == 1] # USER_KEY 부분은 인자로 받아서 집어넣기
+    tasks = [ticket['CONTENT_STR'] for ticket in tasks]
+    for i, task in enumerate(tasks):
+        for topic in set(topics):
+            topic_indices = [i for i, t in enumerate(topics) if t == topic]
+            topic_texts = [dataset[i] for i in topic_indices]
+            topic_embeddings = embeddings[topic_indices]
 
-        # 군집 내 텍스트와 업무 키워드 임베딩 생성
-        task_embeddings = embedding_model.encode(task)
+            # 군집 내 텍스트와 업무 키워드 임베딩 생성
+            task_embeddings = embedding_model.encode(task)
 
-        # 유사도 계산
-        similarities = util.pytorch_cos_sim(topic_embeddings, task_embeddings)
+            # 유사도 계산
+            similarities = util.pytorch_cos_sim(topic_embeddings, task_embeddings)
 
-        # 유사도 평균값이 임계값을 넘는지 확인
-        similarities_array = np.array(similarities)
-        mean_similarity = np.mean(similarities_array)
-        cluster_similarities.append((topic, mean_similarity))
+            # 유사도 평균값이 임계값을 넘는지 확인
+            similarities_array = np.array(similarities)
+            mean_similarity = np.mean(similarities_array)
+            cluster_similarities.append((i+1, topic, mean_similarity))
 
-    # 결과 DataFrame 생성
-    df_results = pd.DataFrame(cluster_similarities, columns=["Cluster", "Mean Similarity"])
+        # 결과 DataFrame 생성
+        df_results = pd.DataFrame(cluster_similarities, columns=["Ticket", "Cluster", "Mean Similarity"])
 
     return df_results
 
+def start():
+    dataset = datasetLoader()
+    topic_model, topics, probs, embedding_model, embeddings = modelLoader(dataset)
+    print(topic_model.get_topic_info()) # 데이터 구조 확인용
+    fig = topic_model.visualize_topics(title = "<b>토픽 군집화 이미지</b>") # 이름은 맘대루
+    fig.write_html("./topics_visualization.html") # 이부분은 어떻게 할지 고민. html을 저장해서 전송? 아니면 fig를 반환해서 렌더링시 바로 사용?
+    df_results = similarity(embedding_model, embeddings, topics, dataset)
+    print(df_results) # 데이터 구조 확인용
 
-dataset = datasetLoader()
-topic_model, topics, probs, embedding_model, embeddings = modelLoader(dataset)
-print(topic_model.get_topic_info())
-print(topic_model.visualize_topics())
-print(topic_model.visualize_term_rank())
-df_results = similarity(embedding_model, embeddings)
-
-# # 한글 폰트 설정
-# font_path = "./clustering/content/NanumGothic.ttf"  # 나눔고딕 폰트 경로
-# font_prop = fm.FontProperties(fname=font_path).get_name()
-# plt.rcParams["font.family"] = font_prop
-
-# plt.figure(figsize=(10, 6))
-# sns.barplot(x="Cluster", y="Mean Similarity", data=df_results)
-# plt.title("클러스터별 업무 키워드와의 평균 유사도")
-# plt.xlabel("클러스터")
-# plt.ylabel("평균 유사도")
-# plt.ylim(0, 1)
-# plt.show()
+start()
 
 # 서버의 group 테이블로 post 쏘기
