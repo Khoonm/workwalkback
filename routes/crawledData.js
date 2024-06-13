@@ -1,21 +1,68 @@
 const express = require('express');
 const router = express.Router();
 const CrawledData = require('../models/crawledData');
+const path = require('path');
+const { exec } = require('child_process');
+const pythonScriptPath = path.resolve(__dirname, '../clustering/clustering.py');
+const fs = require("fs");
 
 // Create a new data entry
 router.post('/crawledData', async (req, res) => {
     const { USER_KEY_CD, GET_DATE_YMD, GET_TIME_DT, URL_STR, DATA_STR, TYPE_FLG } = req.body;
     try {
-        // if TYPE_FLG == 1 인 경우 select 해서 *한 다음에 USER_KEY_CD, GET_DATE_YMD에 맞는 데이터만 가져오기
-        // 가져온 데이터를 보내 clustering.py를 실행시키기
-        const crawledData = await CrawledData.create({ 
-            USER_KEY_CD,
-            GET_DATE_YMD,
-            GET_TIME_DT,
-            URL_STR,
-            DATA_STR
-        });
-        res.status(201).json(crawledData);
+        if (TYPE_FLG == 1) {
+            // USER_KEY_CD와 GET_DATE_YMD에 맞는 데이터 가져오기
+            const dataToCluster = await CrawledData.findAll({
+                where: {
+                    USER_KEY_CD,
+                    GET_DATE_YMD
+                }
+            });
+
+            // 데이터가 있는지 확인
+            if (dataToCluster.length > 0) {
+                
+                // 데이터를 JSON 문자열로 변환
+                const dataString = JSON.stringify(dataToCluster);
+                fs.writeFile("temp.json", dataString, (err) => console.log(err));
+
+                // clustering.py 실행
+                const command = `python ${pythonScriptPath} "${USER_KEY_CD}"`;
+
+                exec(command, { encoding: 'utf8' }, (error, stdout, stderr) => {
+                    if (error) {
+                        console.error(`Error executing Python script: ${error}`);
+                        console.error(`stderr: ${stderr}`);
+                        return res.status(500).json({ error: 'Failed to execute clustering script' });
+                    }
+                    
+                    try {
+                        fs.readFile("temp2.json", "utf8", (err, data) => {
+                            if (err) {
+                                console.error(err);
+                                return;
+                            }
+                            res.status(200).send(data);
+                        });
+                    } catch (parseError) {
+                        console.error(`Error parsing Python script output: ${parseError}`);
+                        res.status(500).json({ error: 'Failed to parse clustering script output' });
+                    }
+                });
+            } else {
+                res.status(404).json({ error: 'No data found for the given USER_KEY_CD and GET_DATE_YMD' });
+            }
+        } else {
+            // 새로운 데이터 항목 생성
+            const crawledData = await CrawledData.create({ 
+                USER_KEY_CD,
+                GET_DATE_YMD,
+                GET_TIME_DT,
+                URL_STR,
+                DATA_STR
+            });
+            res.status(201).json(crawledData);
+        }
     } catch (error) {
         res.status(500).json({ error: 'Failed to create crawled data entry' });
     }

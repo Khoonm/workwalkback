@@ -58,6 +58,7 @@ router.put('/ticket/:TICKET_IDX', async (req, res) => {
             ticket.DATE_ST_YMD = DATE_ST_YMD;
             ticket.DATE_END_YMD = DATE_END_YMD;
             ticket.CONTENT_STR = CONTENT_STR;
+            // ticket.EX_CONTENT_STR = EX_CONTENT_STR;
             ticket.MANAGER_STR = MANAGER_STR;
             ticket.STATUS_FLG = STATUS_FLG;
             await ticket.save();
