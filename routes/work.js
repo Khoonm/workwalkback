@@ -51,6 +51,32 @@ router.get('/work/:IDX_CD', async (req, res) => {
     }
 });
 
+//업무 종료신호 전달
+router.put('/work', async (req, res) => {
+    const { USER_KEY_CD, DATE_YMD, FIN_FLG } = req.body;
+  
+    try {
+      const updatedWorkCount = await Work.update(
+        { FIN_FLG },
+        {
+          where: {
+            USER_KEY_CD,
+            DATE_YMD,
+          },
+        }
+      );
+  
+      if (updatedWorkCount > 0) {
+        res.json({ message: `${updatedWorkCount} work(s) updated successfully` });
+      } else {
+        res.status(404).json({ error: 'No matching work records found' });
+      }
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Failed to update work' });
+    }
+  });
+
 // Update a specific work entry by ID
 router.put('/work/:IDX_CD', async (req, res) => {
     const { IDX_CD } = req.params;

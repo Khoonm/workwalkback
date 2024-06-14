@@ -13,7 +13,6 @@ router.post('/crawledData', async (req, res) => {
     const { USER_KEY_CD, GET_DATE_YMD, GET_TIME_DT, URL_STR, DATA_STR, TYPE_FLG } = req.body;
     try {
         if (TYPE_FLG == 1) {
-            // 미리 종료신호 쏴주기? 바로 잘 닫히는거 보면 쏴줄 필요도 없는거 같기도 하고
             // USER_KEY_CD와 GET_DATE_YMD에 맞는 데이터 가져오기
             const transformData = (item) => ({
                 // GROUP_IDX, 어떻게 처리?
@@ -66,8 +65,12 @@ router.post('/crawledData', async (req, res) => {
                                     console.error('POST 요청 실패:', error);
                                 }
                             }
-                            //await axios.post('http://localhost:3000/work', transformData(d));
-                            // python 에서
+                            const workfin = {
+                                USER_KEY_CD: USER_KEY_CD,
+                                DATE_YMD: GET_DATE_YMD,
+                                FIN_FLG: 1
+                            }
+                            await axios.put('http://localhost:3000/work', workfin);
                             res.status(201).send(data); // postman 확인용
                         });
                     } catch (parseError) {

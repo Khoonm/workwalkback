@@ -68,8 +68,6 @@ def main(user_key_cd):
     dataset = datasetLoader()
     topic_model, topics, probs, embedding_model, embeddings = modelLoader(dataset)
     topic_info = topic_model.get_topic_info()
-    fig = topic_model.visualize_topics(title="<b>토픽 군집화 이미지</b>")
-    fig.write_html("./topics_visualization.html")
     df_results = similarity(user_key_cd, embedding_model, embeddings, topics, dataset)
     
     # Convert topic_info to a dictionary
