@@ -5,17 +5,17 @@ const Employee = require('./employee.js');
 const Group = sequelize.define('Group', {
     GROUP_IDX: {
         type: DataTypes.INTEGER,
-        primaryKey : true,
+        primaryKey: true,
+        unique: true,
         allowNull: false,
+        autoIncrement: true,
     },
     TICKET_IDX: {
         type: DataTypes.INTEGER,
-        primaryKey : true,
         allowNull: false,
     },
     GROUP_NUM: {
         type: DataTypes.INTEGER,
-        primaryKey : true,
         allowNull: false,
     },
     USER_KEY_CD: {
@@ -30,10 +30,10 @@ const Group = sequelize.define('Group', {
         type: DataTypes.STRING(10),
         allowNull: false,
     },
-    DATA_CNT: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-    },
+    // DATA_CNT: {
+    //     type: DataTypes.INTEGER,
+    //     allowNull: false,
+    // },
     HEAD_KEYWORD_STR: {
         type: DataTypes.STRING(10),
         allowNull: false,
@@ -42,10 +42,10 @@ const Group = sequelize.define('Group', {
         type: DataTypes.STRING(30),
         allowNull: false,
     },
-    WORK_FLG: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-    },
+    // WORK_FLG: {
+    //     type: DataTypes.INTEGER,
+    //     allowNull: false,
+    // },
     SCORE_NUM: {
         type: DataTypes.NUMBER,
         allowNull: false,

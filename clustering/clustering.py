@@ -85,7 +85,7 @@ if __name__ == "__main__":
     if len(sys.argv) > 1:
         user_key_cd = sys.argv[1]
         result = main(user_key_cd)
-        with open('temp2.json', 'w', encoding='UTF-8-sig') as file:
+        with open('temp2.json', 'w', encoding='UTF-8') as file:
             file.write(json.dumps(result, ensure_ascii=False))
     else:
         print(json.dumps({"error": "Not enough data provided"}, ensure_ascii=False))

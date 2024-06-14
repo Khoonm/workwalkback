@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "axios": "^1.7.2",
     "cors": "^2.8.5",
     "express": "^4.19.2",
     "sequelize": "^6.37.3",
@@ -10,7 +11,10 @@
     "nodemon": "^3.1.3"
   },
   "nodemonConfig": {
-    "ignore": ["temp.json", "temp2.json"]
+    "ignore": [
+      "temp.json",
+      "temp2.json"
+    ]
   },
   "name": "workwalkback",
   "version": "1.0.0",

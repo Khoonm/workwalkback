@@ -5,13 +5,29 @@ const path = require('path');
 const { exec } = require('child_process');
 const pythonScriptPath = path.resolve(__dirname, '../clustering/clustering.py');
 const fs = require("fs");
+const axios = require('axios');
+
 
 // Create a new data entry
 router.post('/crawledData', async (req, res) => {
     const { USER_KEY_CD, GET_DATE_YMD, GET_TIME_DT, URL_STR, DATA_STR, TYPE_FLG } = req.body;
     try {
         if (TYPE_FLG == 1) {
+            // 미리 종료신호 쏴주기? 바로 잘 닫히는거 보면 쏴줄 필요도 없는거 같기도 하고
             // USER_KEY_CD와 GET_DATE_YMD에 맞는 데이터 가져오기
+            const transformData = (item) => ({
+                // GROUP_IDX, 어떻게 처리?
+                TICKET_IDX: item['Ticket'],
+                GROUP_NUM: item['Cluster'],
+                USER_KEY_CD: USER_KEY_CD,
+                DATE_YMD: GET_DATE_YMD,
+                // DATA_CNT, 빼도 될듯? 
+                HEAD_KEYWORD_STR: item['Representation'][0],
+                KEYWORD_STR: item['Representation'].join(', '),
+                // WORK_FLG:, 흠
+                SCORE_NUM: item['Mean Similarity']
+            });
+
             const dataToCluster = await CrawledData.findAll({
                 where: {
                     USER_KEY_CD,
@@ -21,7 +37,6 @@ router.post('/crawledData', async (req, res) => {
 
             // 데이터가 있는지 확인
             if (dataToCluster.length > 0) {
-                
                 // 데이터를 JSON 문자열로 변환
                 const dataString = JSON.stringify(dataToCluster);
                 fs.writeFile("temp.json", dataString, (err) => console.log(err));
@@ -37,12 +52,23 @@ router.post('/crawledData', async (req, res) => {
                     }
                     
                     try {
-                        fs.readFile("temp2.json", "utf8", (err, data) => {
+                        fs.readFile("temp2.json", "utf8", async (err, data) => {
                             if (err) {
                                 console.error(err);
                                 return;
                             }
-                            res.status(200).send(data);
+                            const parsedData = JSON.parse(data);
+                            for (const d of parsedData) {
+                                try {
+                                    const response = await axios.post('http://localhost:3000/group', transformData(d));
+                                    console.log('POST 요청 성공:', response.data);
+                                } catch (error) {
+                                    console.error('POST 요청 실패:', error);
+                                }
+                            }
+                            //await axios.post('http://localhost:3000/work', transformData(d));
+                            // python 에서
+                            res.status(201).send(data); // postman 확인용
                         });
                     } catch (parseError) {
                         console.error(`Error parsing Python script output: ${parseError}`);
