@@ -31,8 +31,13 @@ const Ticket = sequelize.define('Ticket', {
         allowNull: false,
     },
     CONTENT_STR: {
-        type: DataTypes.STRING(5000),
+        type: DataTypes.STRING(500),
         allowNull: false,
+    },
+    EX_CONTENT_STR: {
+        type: DataTypes.STRING(1000),
+        allowNull: false,
+        defaultValue: 'default',
     },
     MANAGER_STR: {
         type: DataTypes.STRING(4),
