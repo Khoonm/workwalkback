@@ -18,6 +18,10 @@ const Group = sequelize.define('Group', {
         type: DataTypes.INTEGER,
         allowNull: false,
     },
+    TICKET_STR: {
+        type: DataTypes.STRING(100),
+        allowNull: false,
+    },    
     USER_KEY_CD: {
         type: DataTypes.STRING(8),
         references: {
@@ -30,10 +34,6 @@ const Group = sequelize.define('Group', {
         type: DataTypes.STRING(10),
         allowNull: false,
     },
-    // DATA_CNT: {
-    //     type: DataTypes.INTEGER,
-    //     allowNull: false,
-    // },
     HEAD_KEYWORD_STR: {
         type: DataTypes.STRING(10),
         allowNull: false,
@@ -42,10 +42,6 @@ const Group = sequelize.define('Group', {
         type: DataTypes.STRING(30),
         allowNull: false,
     },
-    // WORK_FLG: {
-    //     type: DataTypes.INTEGER,
-    //     allowNull: false,
-    // },
     SCORE_NUM: {
         type: DataTypes.NUMBER,
         allowNull: false,

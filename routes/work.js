@@ -51,31 +51,57 @@ router.get('/work/:IDX_CD', async (req, res) => {
     }
 });
 
-//업무 종료신호 전달
+// 업무 종료신호 전달
 router.put('/work', async (req, res) => {
-    const { USER_KEY_CD, DATE_YMD, FIN_FLG } = req.body;
+    const { USER_KEY_CD, DATE_YMD, TIME_DT, FIN_FLG } = req.body;
   
     try {
-      const updatedWorkCount = await Work.update(
-        { FIN_FLG },
-        {
-          where: {
-            USER_KEY_CD,
-            DATE_YMD,
-          },
+        // 매칭되는 모든 레코드를 찾기
+        const works = await Work.findAll({
+            where: {
+                USER_KEY_CD,
+                DATE_YMD,
+            },
+        });
+
+        if (works.length > 0) {
+            // 매칭된 각 레코드에 대해 TIME_DT를 계산하여 업데이트
+            const updatedWorks = await Promise.all(works.map(async (work) => {
+                const oldTime = work.TIME_DT;  // 기존 TIME_DT 값 가져오기
+
+                // 새로운 TIME_DT 값에서 기존 TIME_DT 값을 빼는 로직 구현
+                const oldTimeParts = oldTime.split(':');
+                const newTimeParts = TIME_DT.split(':');
+                
+                const oldTimeInMinutes = parseInt(oldTimeParts[0]) * 60 + parseInt(oldTimeParts[1]);
+                const newTimeInMinutes = parseInt(newTimeParts[0]) * 60 + parseInt(newTimeParts[1]);
+                
+                const diffInMinutes = newTimeInMinutes - oldTimeInMinutes;
+                const diffHours = Math.floor(diffInMinutes / 60);
+                const diffMinutes = diffInMinutes % 60;
+                
+                const diffTime = `${String(diffHours)}:${String(diffMinutes)}`;
+
+                // 레코드 업데이트
+                work.TIME_DT = diffTime;
+                work.FIN_FLG = FIN_FLG;
+                await work.save();
+
+                return work;
+            }));
+
+            res.json({
+                message: `${updatedWorks.length} work(s) updated successfully`,
+                updatedWorks
+            });
+        } else {
+            res.status(404).json({ error: 'No matching work records found' });
         }
-      );
-  
-      if (updatedWorkCount > 0) {
-        res.json({ message: `${updatedWorkCount} work(s) updated successfully` });
-      } else {
-        res.status(404).json({ error: 'No matching work records found' });
-      }
     } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: 'Failed to update work' });
+        console.error(error);
+        res.status(500).json({ error: 'Failed to update work' });
     }
-  });
+});
 
 // Update a specific work entry by ID
 router.put('/work/:IDX_CD', async (req, res) => {

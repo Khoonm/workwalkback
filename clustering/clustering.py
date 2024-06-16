@@ -48,9 +48,11 @@ def modelLoader(dataset): # 가져온 코드
 def similarity(user_key_cd, embedding_model, embeddings, topics, dataset):
     cluster_similarities = []
     resp = requests.get('http://127.0.0.1:3000/ticket').json()
-    tasks = [ticket['CONTENT_STR'] for ticket in resp if ticket['USER_KEY_CD'] == user_key_cd and ticket['STATUS_FLG'] == 1]
+    tickets = [ticket for ticket in resp if ticket['USER_KEY_CD'] == user_key_cd and ticket['STATUS_FLG'] == 1]
     
-    for i, task in enumerate(tasks):
+    for i, ticket in enumerate(tickets):
+        task = ticket['CONTENT_STR']
+        title = ticket['TITLE_STR']
         task_embeddings = embedding_model.encode(task)
         for topic in set(topics):
             topic_indices = [i for i, t in enumerate(topics) if t == topic]
@@ -59,9 +61,9 @@ def similarity(user_key_cd, embedding_model, embeddings, topics, dataset):
             similarities = util.pytorch_cos_sim(topic_embeddings, task_embeddings)
             similarities_array = np.array(similarities)
             mean_similarity = round(np.mean(similarities_array), 5)
-            cluster_similarities.append((i+1, topic, mean_similarity))
+            cluster_similarities.append((i+1, topic, title, mean_similarity))
 
-    df_results = pd.DataFrame(cluster_similarities, columns=["Ticket", "Cluster", "Mean Similarity"])
+    df_results = pd.DataFrame(cluster_similarities, columns=["Ticket", "Cluster", "Ticket Name", "Mean Similarity"])
     return df_results
 
 def main(user_key_cd):

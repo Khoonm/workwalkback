@@ -15,15 +15,13 @@ router.post('/crawledData', async (req, res) => {
         if (TYPE_FLG == 1) {
             // USER_KEY_CD와 GET_DATE_YMD에 맞는 데이터 가져오기
             const transformData = (item) => ({
-                // GROUP_IDX, 어떻게 처리?
                 TICKET_IDX: item['Ticket'],
                 GROUP_NUM: item['Cluster'],
+                TICKET_STR: item['Ticket Name'],
                 USER_KEY_CD: USER_KEY_CD,
                 DATE_YMD: GET_DATE_YMD,
-                // DATA_CNT, 빼도 될듯? 
                 HEAD_KEYWORD_STR: item['Representation'][0],
                 KEYWORD_STR: item['Representation'].join(', '),
-                // WORK_FLG:, 흠
                 SCORE_NUM: item['Mean Similarity']
             });
 
@@ -68,6 +66,7 @@ router.post('/crawledData', async (req, res) => {
                             const workfin = {
                                 USER_KEY_CD: USER_KEY_CD,
                                 DATE_YMD: GET_DATE_YMD,
+                                TIME_DT: GET_TIME_DT,
                                 FIN_FLG: 1
                             }
                             await axios.put('http://localhost:3000/work', workfin);
