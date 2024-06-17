@@ -34,6 +34,7 @@ router.post('/crawledData', async (req, res) => {
 
             // 데이터가 있는지 확인
             if (dataToCluster.length > 0) {
+                res.status(201).end();
                 // 데이터를 JSON 문자열로 변환
                 const dataString = JSON.stringify(dataToCluster);
                 fs.writeFile("temp.json", dataString, (err) => console.log(err));
@@ -45,7 +46,6 @@ router.post('/crawledData', async (req, res) => {
                     if (error) {
                         console.error(`Error executing Python script: ${error}`);
                         console.error(`stderr: ${stderr}`);
-                        return res.status(500).json({ error: 'Failed to execute clustering script' });
                     }
                     
                     try {
@@ -70,11 +70,9 @@ router.post('/crawledData', async (req, res) => {
                                 FIN_FLG: 1
                             }
                             await axios.put('http://localhost:3000/work', workfin);
-                            res.status(201).send(data); // postman 확인용
                         });
                     } catch (parseError) {
                         console.error(`Error parsing Python script output: ${parseError}`);
-                        res.status(500).json({ error: 'Failed to parse clustering script output' });
                     }
                 });
             } else {
